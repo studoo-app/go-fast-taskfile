@@ -1,0 +1,365 @@
+#   _____         _     __ _ _
+# |_   _|_ _ ___| | __/ _(_) | ___
+#   | |/ _` / __| |/ / |_| | |/ _ \
+#   | | (_| \__ \   <|  _| | |  __/
+#   |_|\__,_|___/_|\_\_| |_|_|\___|
+#
+# https://taskfile.dev
+# Benoit Foujols
+#
+
+version: '3'
+
+silent: true
+
+vars:
+  # SYSTEM
+  PWD: $PWD
+  # DOCKER
+  DOCKER: docker
+  DOCKER_RUN: "{{.DOCKER}} run"
+  DOCKER_COMPOSE: docker compose
+  DOCKER_COMPOSE_UP: "{{.DOCKER_COMPOSE}} up"
+  DOCKER_COMPOSE_STOP: "{{.DOCKER_COMPOSE}} stop"
+  # SYMFONY
+  SYMFONY: symfony
+  SYMFONY_SERVER_START: "{{.SYMFONY}} serve -d"
+  SYMFONY_SERVER_START_NO_TLS: "{{.SYMFONY}} serve --no-tls -d"
+  SYMFONY_SERVER_STOP: "{{.SYMFONY}} server:stop"
+  SYMFONY_CONSOLE: "{{.SYMFONY}} console"
+  SYMFONY_LINT: "{{.SYMFONY_CONSOLE}} lint:"
+  # COMPOSER
+  COMPOSER: composer
+  COMPOSER_INSTALL: "{{.COMPOSER}} install"
+  COMPOSER_UPDATE: "{{.COMPOSER}} update"
+  # PHP QA TOOLS
+  PHPQA: jakzal/phpqa
+  PHPQA_RUN: "{{.DOCKER_RUN}} --init -it --rm -v {{.PWD}}:/project -w /project {{.PHPQA}}"
+  # PHP UNIT TOOLS
+  PHPUNIT: "APP_ENV=test {{.SYMFONY}} php bin/phpunit"
+  # JS TOOLS
+  NPM: npm
+  NPM_INSTALL: "{{.NPM}} install --force"
+  NPM_UPDATE: "{{.NPM}} update"
+  NPM_BUILD: "{{.NPM}} run build"
+  NPM_DEV: "{{.NPM}} run dev"
+  NPM_WATCH: "{{.NPM}} run watch -d"
+
+tasks:
+  default:
+    cmds:
+      - task: help
+
+  ## === 🆘  HELP ==================================================
+
+  help:
+    desc: "Description des tâches disponibles"
+    cmds:
+      - echo "Bienvenu dans Taskfile pour Docker/Symfony"
+      - echo "----------------------------------------------"
+      - echo "Voici la description de votre systeme:"
+      - echo 'Votre systeme "{{OS}}"'
+      - echo 'Votre architecture "{{ARCH}}"'
+      - echo "----------------------------------------------"
+      - task --list
+
+  ## === 🐋  DOCKER ================================================
+
+  docker-up:
+    desc: "Start docker containers"
+    cmds:
+      - "{{.DOCKER_COMPOSE_UP}}"
+
+  docker-stop:
+    desc: "Stop docker containers"
+    cmds:
+      - "{{.DOCKER_COMPOSE_STOP}}"
+
+  ## === 📦  CREATE ENVS FILES ==============================================
+
+  create-envs:
+    desc: "Create environment files"
+    cmds:
+      # python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)'
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' _.env.example > .env
+    vars:
+      UUID:
+        sh: uuidgen | tr -d -
+
+  create-docker-envs:
+    desc: "Create environment files for docker"
+    cmds:
+      - DIR="${PWD##*/}" && sed "s/DOCKERCHANGE/$DIR/g" _docker-compose.yml > docker-compose.yml
+
+  ## === 🎛️  SYMFONY ===============================================
+
+  sf-start:
+    desc: "Start symfony server"
+    cmds:
+      - "{{.SYMFONY_SERVER_START}}"
+
+  sf-stop:
+    desc: "Stop symfony server"
+    cmds:
+      - "{{.SYMFONY_SERVER_STOP}}"
+
+  sf-cc:
+    desc: "Clear symfony cache"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} cache:clear"
+
+  sf-log:
+    desc: "Display symfony logs"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} server:log"
+
+  sf-ddc:
+    desc: "Create symfony database"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:database:create --if-not-exists"
+
+  sf-ddd:
+    desc: "Drop symfony database"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:database:drop --if-exists --force"
+
+  sf-dsu:
+    desc: "Update symfony schema database"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:schema:update --force"
+
+  sf-mm:
+    desc: "Make symfony migration"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} make:migration"
+
+  sf-dmm:
+    desc: "Migrate"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:migrations:migrate --no-interaction"
+
+  sf-dfl:
+    desc: "Load fixtures"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:fixtures:load --no-interaction"
+
+  sf-me:
+    desc: "Make entity"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} make:entity"
+
+  sf-mc:
+    desc: "Make controller"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} make:controller"
+
+  sf-mf:
+    desc: "Make form"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} make:form"
+
+  sf-perm:
+    desc: "Fix permissions"
+    cmds:
+      - "chmod -R 777 var"
+
+  sf-sudo-perm:
+    desc: "Fix permissions with sudo"
+    cmds:
+      - "sudo chmod -R 777 var"
+
+  sf-dump-env:
+    desc: "Dump env"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} debug:dotenv"
+
+  sf-dump-env-container:
+    desc: "Dump env container"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} debug:container --env-vars"
+
+  sf-dump-router:
+    desc: "Dump routes"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} debug:router"
+
+  sf-open:
+    desc: "Open symfony server"
+    cmds:
+      - "{{.SYMFONY}} open:local"
+
+  sf-check-requirements:
+    desc: "Check symfony requirements"
+    cmds:
+      - "{{.SYMFONY}} check:requirements"
+
+  ## === 📦  COMPOSER ==============================================
+
+  composer-install:
+    desc: "Install composer dependencies"
+    cmds:
+      - "{{.COMPOSER_INSTALL}}"
+
+  composer-update:
+    desc: "Update composer dependencies"
+    cmds:
+      - "{{.COMPOSER_UPDATE}}"
+
+  composer-validate:
+    desc: Validate composer.json file.
+    cmds:
+      - "{{.COMPOSER}} validate"
+
+  composer-validate-deep:
+    desc: Validate composer.json and composer.lock files in strict mode.
+    cmds:
+      - "{{.COMPOSER}} validate --strict --check-lock"
+
+  ## === 📦  NPM ==============================================
+
+  npm-install:
+    desc: "Install npm dependencies"
+    cmds:
+      - "{{.NPM_INSTALL}}"
+
+  npm-update:
+    desc: "Update npm dependencies"
+    cmds:
+      - "{{.NPM_UPDATE}}"
+
+  npm-build:
+    desc: "Build assets"
+    cmds:
+      - "{{.NPM_BUILD}}"
+
+  npm-dev:
+    desc: "Build assets in dev mode"
+    cmds:
+      - "{{.NPM_DEV}}"
+
+  npm-watch:
+    desc: "Watch assets"
+    cmds:
+      - "{{.NPM_WATCH}}"
+
+  ## === 🐛  PHPQA =================================================
+
+  qa-cs-fixer-dry-run:
+    desc: "Run php-cs-fixer dry run"
+    cmds:
+      - "{{.PHPQA_RUN}} php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run"
+
+  qa-cs-fixer:
+    desc: "Run php-cs-fixer"
+    cmds:
+      - "{{.PHPQA_RUN}} php-cs-fixer fix ./src --rules=@Symfony --verbose"
+
+  qa-phpstan:
+    desc: "Run phpstan"
+    cmds:
+      - "{{.PHPQA_RUN}} phpstan analyse ./src --level=7"
+
+  qa-security-checker:
+    desc: "Run security-checker"
+    cmds:
+      - "{{.SYMFONY}} security:check"
+
+  qa-phpcpd:
+    desc: "Run phpcpd (copy/paste detector)"
+    cmds:
+      - "{{.PHPQA_RUN}} phpcpd ./src"
+
+  qa-php-metrics:
+    desc: "Run php-metrics"
+    cmds:
+      - "{{.PHPQA_RUN}} phpmetrics --report-html=var/phpmetrics ./src"
+
+  qa-lint-twigs:
+    desc: "Run lint:twig"
+    cmds:
+      - "{{.SYMFONY_LINT}}twig ./templates"
+
+  qa-lint-yaml:
+    desc: "Run lint:yaml"
+    cmds:
+      - "{{.SYMFONY_LINT}}yaml ./config"
+
+  qa-lint-container:
+    desc: "Run lint:container"
+    cmds:
+      - "{{.SYMFONY_LINT}}container"
+
+  qa-lint-schema:
+    desc: "Lint Doctrine schema"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:schema:validate --skip-sync -vvv --no-interaction"
+
+  ## === 🔎  TESTS =================================================
+
+  tests:
+    desc: "Run tests"
+    cmds:
+      - "{{.PHPUNIT}} --testdox"
+
+  tests-coverage:
+    desc: "Run tests with coverage"
+    cmds:
+      - "{{.PHPUNIT}} --coverage-html var/coverage"
+
+  ## === ⭐  OTHERS =================================================
+
+  before-commit:
+    desc: "Run before commit"
+    cmds:
+      - task: qa-cs-fixer
+      - task: qa-phpstan
+      - task: qa-security-checker
+      - task: qa-phpcpd
+      - task: qa-lint-twigs
+      - task: qa-lint-yaml
+      - task: qa-lint-container
+      - task: qa-lint-schema
+      - task: tests
+
+  first-install:
+    desc: "First install"
+    cmds:
+      - task: create-envs
+      - task: create-docker-envs
+      - task: docker-up
+      - task: composer-install
+      - task: sf-perm
+      - task: sf-ddc
+      - task: sf-dmm
+      - task: sf-start
+      - task: sf-open
+
+  start:
+    desc: "Start"
+    cmds:
+      - |
+        if [ ! -f .env ]; then
+          task first-install
+        else
+          task docker-up 
+          task sf-start 
+          task sf-open
+        fi
+
+  stop:
+    desc: "Stop"
+    cmds:
+      - |
+        echo "Are you sure you want to stop ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task sf-stop
+          task docker-stop
+        fi
+
+  reset-db:
+    desc: "Reset database"
+    cmds:
+      - task: sf-dd
+      - task: sf-dc
+      - task: sf-dmm
