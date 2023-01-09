@@ -331,6 +331,12 @@ tasks:
       - task: sf-perm
       - task: sf-ddc
       - task: sf-dmm
+      - |
+        echo "Are you sure you want to datafixture ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task sf-dfl
+        fi
       - task: sf-start
       - task: sf-open
 
@@ -360,6 +366,11 @@ tasks:
   reset-db:
     desc: "Reset database"
     cmds:
-      - task: sf-dd
-      - task: sf-dc
-      - task: sf-dmm
+      - |
+        echo "Are you sure you want to reset ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task sf-ddd
+          task sf-ddc
+          task sf-dmm
+        fi
