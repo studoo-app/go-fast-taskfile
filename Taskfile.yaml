@@ -326,10 +326,30 @@ tasks:
   first-install:
     desc: "First install"
     cmds:
-      - task: create-envs
-      - task: create-docker-envs
-      - task: docker-up
-      - task: composer-install
+      - |
+        echo "Are you sure you download to file raw config .env ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task create-envs
+        fi
+      - |
+        echo "Are you sure you download to file raw config docker-compose ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task create-docker-envs
+        fi
+      - |
+        if [ ! -f docker-compose.yml ]; then
+          docker-up
+        fi
+      - |
+        if [ ! -f composer.json ]; then
+          composer-install
+        fi
+      - |
+        if [ ! -f package.json ]; then
+          npm-install
+        fi
       - task: sf-perm
       - task: sf-ddc
       - task: sf-dmm
