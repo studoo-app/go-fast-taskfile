@@ -80,6 +80,7 @@ tasks:
   create-envs:
     desc: "Create environment files"
     cmds:
+      - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/_.env.example
       # python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)'
       - sed 's/ENVCHANGEUUID/{{.UUID}}/g' _.env.example > .env
     vars:
@@ -89,6 +90,7 @@ tasks:
   create-docker-envs:
     desc: "Create environment files for docker"
     cmds:
+      - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/_docker-compose.yml
       - DIR="${PWD##*/}" && sed "s/DOCKERCHANGE/$DIR/g" _docker-compose.yml > docker-compose.yml
 
   ## === 🎛️  SYMFONY ===============================================
