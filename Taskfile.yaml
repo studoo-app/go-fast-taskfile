@@ -336,23 +336,23 @@ tasks:
           task create-envs
         fi
       - |
+        echo "Don't forget to edit the file .env for project ? [Enter] :"
+        read CONFIRM
+      - |
         echo "Are you sure you download to file raw config docker-compose ? [y/N] :"
         read CONFIRM
         if [ "$CONFIRM" = "y" ]; then
           task create-docker-envs
+          task docker-up
         fi
+      - task: composer-install
       - |
-        if [ ! -f docker-compose.yml ]; then
-          docker-up
+        echo "Are you sure you run to npm install ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task npm-install
         fi
-      - |
-        if [ ! -f composer.json ]; then
-          composer-install
-        fi
-      - |
-        if [ ! -f package.json ]; then
-          npm-install
-        fi
+      - task: docker-up
       - task: sf-perm
       - task: sf-ddc
       - task: sf-dmm
