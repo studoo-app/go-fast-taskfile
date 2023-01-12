@@ -23,6 +23,7 @@ vars:
   DOCKER_COMPOSE: docker compose
   DOCKER_COMPOSE_UP: "{{.DOCKER_COMPOSE}} up -d"
   DOCKER_COMPOSE_STOP: "{{.DOCKER_COMPOSE}} stop"
+  DOCKER_COMPOSE_DOWN: "{{.DOCKER_COMPOSE}} down"
   # SYMFONY
   SYMFONY: symfony
   SYMFONY_SERVER_START: "{{.SYMFONY}} serve -d"
@@ -77,6 +78,11 @@ tasks:
     desc: "Stop docker containers"
     cmds:
       - "{{.DOCKER_COMPOSE_STOP}}"
+
+  docker-down:
+    desc: "Stop and remove docker containers"
+    cmds:
+      - "{{.DOCKER_COMPOSE_DOWN}}"
 
   ## === 📦  CREATE ENVS FILES ==============================================
 
@@ -197,6 +203,26 @@ tasks:
     desc: "Check symfony requirements"
     cmds:
       - "{{.SYMFONY}} check:requirements"
+
+  sf-ddc-test:
+    desc: "Create symfony test database"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:database:create --if-not-exists"
+
+  sf-ddd-test:
+    desc: "Drop symfony test database"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:database:drop --if-exists --force --env=test"
+
+  sf-dmm-test:
+    desc: "Migrate in test database"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:migrations:migrate --no-interaction --env=test"
+
+  sf-dfl-test:
+    desc: "Load fixtures in test database"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} doctrine:fixtures:load --no-interaction --env=test"
 
   ## === 📦  COMPOSER ==============================================
 
@@ -388,6 +414,17 @@ tasks:
           task docker-stop
         fi
 
+  down:
+    desc: "Down"
+    cmds:
+      - |
+        echo "Are you sure you want to stop ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task sf-stop
+          task docker-down
+        fi
+
   reset-db:
     desc: "Reset database"
     cmds:
@@ -398,4 +435,16 @@ tasks:
           task sf-ddd
           task sf-ddc
           task sf-dmm
+        fi
+
+  reset-db-test:
+    desc: "Reset test database"
+    cmds:
+      - |
+        echo "Are you sure you want to reset test database ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task sf-ddd-test
+          task sf-ddc-test
+          task sf-dmm-test
         fi
