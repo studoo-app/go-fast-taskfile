@@ -437,6 +437,19 @@ tasks:
           task sf-dmm
         fi
 
+  rebuild-db:
+    desc: "Reset database and reload fixtures"
+    cmds:
+      - |
+        echo "Are you sure you want to reset and reload fixtures ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task sf-ddd
+          task sf-ddc
+          task sf-dmm
+          task sf-dfl
+        fi
+
   reset-db-test:
     desc: "Reset test database"
     cmds:
@@ -447,4 +460,17 @@ tasks:
           task sf-ddd-test
           task sf-ddc-test
           task sf-dmm-test
+        fi
+
+  rebuild-db-test:
+    desc: "Reset test database and reload fixtures"
+    cmds:
+      - |
+        echo "Are you sure you want to reset and reload fixtures ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task sf-ddd-test
+          task sf-ddc-test
+          task sf-dmm-test
+          task sf-dfl-test
         fi
