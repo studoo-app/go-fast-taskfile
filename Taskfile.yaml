@@ -5,48 +5,51 @@
 #   |_|\__,_|___/_|\_\_| |_|_|\___|
 #
 # https://taskfile.dev
-# Benoit Foujols
 #
 
 version: '3'
 
 silent: true
 
+##
+## ===   Variables ==================================================
+##
+
 vars:
+  #
   # TASKFILE
-  VERSION: 1.0.1
+  VERSION: 1.0.5
+  CONTRIBUTOR: "Benoit Foujols, Julien Pechberty"
+  #
   # SYSTEM
   PWD: $PWD
+  #
   # DOCKER
   DOCKER: docker
   DOCKER_RUN: "{{.DOCKER}} run"
-  DOCKER_COMPOSE: docker compose
-  DOCKER_COMPOSE_UP: "{{.DOCKER_COMPOSE}} up -d"
-  DOCKER_COMPOSE_STOP: "{{.DOCKER_COMPOSE}} stop"
-  DOCKER_COMPOSE_DOWN: "{{.DOCKER_COMPOSE}} down"
+  DOCKER_COMPOSE: "{{.DOCKER}} compose"
+  #
   # SYMFONY
   SYMFONY: symfony
-  SYMFONY_SERVER_START: "{{.SYMFONY}} serve -d"
-  SYMFONY_SERVER_START_NO_TLS: "{{.SYMFONY}} serve --no-tls -d"
-  SYMFONY_SERVER_STOP: "{{.SYMFONY}} server:stop"
   SYMFONY_CONSOLE: "{{.SYMFONY}} console"
   SYMFONY_LINT: "{{.SYMFONY_CONSOLE}} lint:"
+  #
   # COMPOSER
   COMPOSER: composer
-  COMPOSER_INSTALL: "{{.COMPOSER}} install"
-  COMPOSER_UPDATE: "{{.COMPOSER}} update"
+  #
   # PHP QA TOOLS
   PHPQA: jakzal/phpqa
   PHPQA_RUN: "{{.DOCKER_RUN}} --init -it --rm -v {{.PWD}}:/project -w /project {{.PHPQA}}"
+  #
   # PHP UNIT TOOLS
   PHPUNIT: "APP_ENV=test {{.SYMFONY}} php bin/phpunit"
+  #
   # JS TOOLS
   NPM: npm
-  NPM_INSTALL: "{{.NPM}} install --force"
-  NPM_UPDATE: "{{.NPM}} update"
-  NPM_BUILD: "{{.NPM}} run build"
-  NPM_DEV: "{{.NPM}} run dev"
-  NPM_WATCH: "{{.NPM}} run watch -d"
+
+##
+## ===   TASKS ==================================================
+##
 
 tasks:
   default:
@@ -59,6 +62,7 @@ tasks:
     desc: "Description des tâches disponibles"
     cmds:
       - echo "Bienvenu dans Taskfile pour Docker/Symfony"
+      - echo "Merci aux contributeurs -> {{.CONTRIBUTOR}}"
       - echo "----------------------------------------------"
       - echo "Version de Taskfile {{.VERSION}}"
       - echo "Voici la description de votre systeme:"
@@ -72,17 +76,12 @@ tasks:
   docker-up:
     desc: "Start docker containers"
     cmds:
-      - "{{.DOCKER_COMPOSE_UP}}"
+      - "{{.DOCKER_COMPOSE}} up -d"
 
   docker-stop:
     desc: "Stop docker containers"
     cmds:
-      - "{{.DOCKER_COMPOSE_STOP}}"
-
-  docker-down:
-    desc: "Stop and remove docker containers"
-    cmds:
-      - "{{.DOCKER_COMPOSE_DOWN}}"
+      - "{{.DOCKER_COMPOSE}} stop"
 
   ## === 📦  CREATE ENVS FILES ==============================================
 
@@ -107,12 +106,17 @@ tasks:
   sf-start:
     desc: "Start symfony server"
     cmds:
-      - "{{.SYMFONY_SERVER_START}}"
+      - "{{.SYMFONY}} serve -d"
+
+  sf-start-no-ssl:
+    desc: "Start symfony server"
+    cmds:
+      - "{{.SYMFONY}} serve --no-tls -d"
 
   sf-stop:
     desc: "Stop symfony server"
     cmds:
-      - "{{.SYMFONY_SERVER_STOP}}"
+      - "{{.SYMFONY}} server:stop"
 
   sf-cc:
     desc: "Clear symfony cache"
@@ -194,6 +198,11 @@ tasks:
     cmds:
       - "{{.SYMFONY_CONSOLE}} debug:router"
 
+  sf-debug:
+    desc: "Debug Systeme"
+    cmds:
+      - "{{.SYMFONY_CONSOLE}} local:php:list"
+
   sf-open:
     desc: "Open symfony server"
     cmds:
@@ -204,37 +213,17 @@ tasks:
     cmds:
       - "{{.SYMFONY}} check:requirements"
 
-  sf-ddc-test:
-    desc: "Create symfony test database"
-    cmds:
-      - "{{.SYMFONY_CONSOLE}} doctrine:database:create --if-not-exists"
-
-  sf-ddd-test:
-    desc: "Drop symfony test database"
-    cmds:
-      - "{{.SYMFONY_CONSOLE}} doctrine:database:drop --if-exists --force --env=test"
-
-  sf-dmm-test:
-    desc: "Migrate in test database"
-    cmds:
-      - "{{.SYMFONY_CONSOLE}} doctrine:migrations:migrate --no-interaction --env=test"
-
-  sf-dfl-test:
-    desc: "Load fixtures in test database"
-    cmds:
-      - "{{.SYMFONY_CONSOLE}} doctrine:fixtures:load --no-interaction --env=test"
-
   ## === 📦  COMPOSER ==============================================
 
   composer-install:
     desc: "Install composer dependencies"
     cmds:
-      - "{{.COMPOSER_INSTALL}}"
+      - "{{.COMPOSER}} install"
 
   composer-update:
     desc: "Update composer dependencies"
     cmds:
-      - "{{.COMPOSER_UPDATE}}"
+      -  "{{.COMPOSER}} update"
 
   composer-validate:
     desc: Validate composer.json file.
@@ -251,27 +240,27 @@ tasks:
   npm-install:
     desc: "Install npm dependencies"
     cmds:
-      - "{{.NPM_INSTALL}}"
+      - "{{.NPM}} install --force"
 
   npm-update:
     desc: "Update npm dependencies"
     cmds:
-      - "{{.NPM_UPDATE}}"
+      - "{{.NPM}} update"
 
   npm-build:
     desc: "Build assets"
     cmds:
-      - "{{.NPM_BUILD}}"
+      - "{{.NPM}} run build"
 
   npm-dev:
     desc: "Build assets in dev mode"
     cmds:
-      - "{{.NPM_DEV}}"
+      - "{{.NPM}} run dev"
 
   npm-watch:
     desc: "Watch assets"
     cmds:
-      - "{{.NPM_WATCH}}"
+      - "{{.NPM}} run watch -d"
 
   ## === 🐛  PHPQA =================================================
 
@@ -414,17 +403,6 @@ tasks:
           task docker-stop
         fi
 
-  down:
-    desc: "Down"
-    cmds:
-      - |
-        echo "Are you sure you want to stop ? [y/N] :"
-        read CONFIRM
-        if [ "$CONFIRM" = "y" ]; then
-          task sf-stop
-          task docker-down
-        fi
-
   reset-db:
     desc: "Reset database"
     cmds:
@@ -435,42 +413,4 @@ tasks:
           task sf-ddd
           task sf-ddc
           task sf-dmm
-        fi
-
-  rebuild-db:
-    desc: "Reset database and reload fixtures"
-    cmds:
-      - |
-        echo "Are you sure you want to reset and reload fixtures ? [y/N] :"
-        read CONFIRM
-        if [ "$CONFIRM" = "y" ]; then
-          task sf-ddd
-          task sf-ddc
-          task sf-dmm
-          task sf-dfl
-        fi
-
-  reset-db-test:
-    desc: "Reset test database"
-    cmds:
-      - |
-        echo "Are you sure you want to reset test database ? [y/N] :"
-        read CONFIRM
-        if [ "$CONFIRM" = "y" ]; then
-          task sf-ddd-test
-          task sf-ddc-test
-          task sf-dmm-test
-        fi
-
-  rebuild-db-test:
-    desc: "Reset test database and reload fixtures"
-    cmds:
-      - |
-        echo "Are you sure you want to reset and reload fixtures ? [y/N] :"
-        read CONFIRM
-        if [ "$CONFIRM" = "y" ]; then
-          task sf-ddd-test
-          task sf-ddc-test
-          task sf-dmm-test
-          task sf-dfl-test
         fi
