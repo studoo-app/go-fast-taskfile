@@ -343,11 +343,16 @@ tasks:
       - task: generate-file
         vars:
           DOCKER_FILENAME: docker-compose_maria.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-init.yml' >> docker-compose_maria.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/db-maria.yml' >> docker-compose_maria.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/phpmyadmin.yml' >> docker-compose_maria.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/mailer.yml' >> docker-compose_maria.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-volumes.yml' >> docker-compose_maria.yml
+      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/docker-init.yml > _docker-components/docker-init.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/docker-init.yml' >> docker-compose_maria.yml
+      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/services/db-maria.yml > _docker-components/services/db-maria.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/services/db-maria.yml' >> docker-compose_maria.yml
+      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/services/phpmyadmin.yml > _docker-components/services/phpmyadmin.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/services/phpmyadmin.yml' >> docker-compose_maria.yml
+      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/services/mailer.yml > _docker-components/services/mailer.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/services/mailer.yml' >> docker-compose_maria.yml
+      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/docker-volumes.yml > _docker-components/docker-volumes.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/docker-volumes.yml' >> docker-compose_maria.yml
     vars:
       UUID:
         sh: uuidgen | tr -d -
@@ -381,6 +386,8 @@ tasks:
     vars:
       UUID:
         sh: uuidgen | tr -d -
+
+
 
   ## === ⭐  OTHERS =================================================
 
