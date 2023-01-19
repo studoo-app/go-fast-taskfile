@@ -101,6 +101,25 @@ tasks:
       - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/_docker-compose.yml > _docker-compose.yml
       - DIR="${PWD##*/}" && sed "s/DOCKERCHANGE/$DIR/g" _docker-compose.yml > docker-compose.yml
 
+  generate-docker-compose:
+    desc: "Create ready to use docker-compose.yml file"
+    cmds:
+      - task: create-components-dir
+      - |
+        echo "Choose your database system ? [mariadb/mysql5/mongodb] :"
+        read CONFIRM
+        case $CONFIRM in 
+          mariadb)
+            task create-maria-env;;
+          mysql5)
+            task create-mysql5-env;;
+          mongodb)
+            task create-mongo-env;;
+          *)
+              echo -n "unknown";;
+        esac
+      - task: remove-components-dir
+
   ## === 🎛️  SYMFONY ===============================================
 
   sf-start:
@@ -328,6 +347,23 @@ tasks:
 
   ## === 👨‍🍳  DOCKER RECIPES =========================================
 
+  create-components-dir:
+    desc: "Create _docker-components directory"
+    internal: true
+    cmds:
+      - |
+        if [ ! -d _docker-components ]; then
+          mkdir _docker-components
+        fi
+
+  remove-components-dir:
+    desc: "Remove _docker-components directory"
+    cmds:
+      - |
+        if [ -d _docker-components ]; then
+          rm -r _docker-components
+        fi
+
   generate-file:
     desc: "Create empty docker-compose.yml"
     internal: true
@@ -337,57 +373,117 @@ tasks:
       - cmd: type {{.DOCKER_FILENAME}}
         platforms: [ windows ]
 
-  make-maria-recipe:
+  add-component:
+    desc: "Add component to docker-compose"
+    internal: true
+    cmds:
+      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/docker-components/{{.SRC_COMP_FILENAME}} > ./_docker-components/{{.DEST_COMP_FILENAME}}
+      - DIR="${PWD##*/}" && sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/{{.DEST_COMP_FILENAME}}' >> {{.DEST_DOCKER_COMPOSE_FILE}}
+
+  create-mariadb-env:
     desc: "Create MariaDb Docker-compose recipe"
     cmds:
       - task: generate-file
         vars:
           DOCKER_FILENAME: docker-compose_maria.yml
-      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/docker-init.yml > _docker-components/docker-init.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/docker-init.yml' >> docker-compose_maria.yml
-      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/services/db-maria.yml > _docker-components/services/db-maria.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/services/db-maria.yml' >> docker-compose_maria.yml
-      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/services/phpmyadmin.yml > _docker-components/services/phpmyadmin.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/services/phpmyadmin.yml' >> docker-compose_maria.yml
-      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/services/mailer.yml > _docker-components/services/mailer.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/services/mailer.yml' >> docker-compose_maria.yml
-      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/_docker-components/docker-volumes.yml > _docker-components/docker-volumes.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/docker-volumes.yml' >> docker-compose_maria.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: _docker-init.yml
+          DEST_COMP_FILENAME: _docker-init.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_mariadb.yml
+          DEST_COMP_FILENAME: _mariadb.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_phpmyadmin.yml
+          DEST_COMP_FILENAME: _phpmyadmin.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_mailer.yml
+          DEST_COMP_FILENAME: _mailer.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: _docker-volumes.yml
+          DEST_COMP_FILENAME: _docker-volumes.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
     vars:
       UUID:
         sh: uuidgen | tr -d -
 
-  make-mysql5-recipe:
+  create-mysql5-env:
     desc: "Create Mysql5 Docker-compose recipe"
     cmds:
       - task: generate-file
         vars:
           DOCKER_FILENAME: docker-compose_mysql5.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-init.yml' >> docker-compose_mysql5.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/db-mysql-5.yml' >> docker-compose_mysql5.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/phpmyadmin.yml' >> docker-compose_mysql5.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/mailer.yml' >> docker-compose_mysql5.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-volumes.yml' >> docker-compose_mysql5.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: _docker-init.yml
+          DEST_COMP_FILENAME: _docker-init.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mysql5.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_mysql5.yml
+          DEST_COMP_FILENAME: _mysql5.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mysql5.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_phpmyadmin.yml
+          DEST_COMP_FILENAME: _phpmyadmin.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mysql5.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_mailer.yml
+          DEST_COMP_FILENAME: _mailer.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mysql5.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: _docker-volumes.yml
+          DEST_COMP_FILENAME: _docker-volumes.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mysql5.yml
     vars:
       UUID:
         sh: uuidgen | tr -d -
 
-  make-mongo-recipe:
+  create-mongo-env:
     desc: "Create MongoDb Docker-compose recipe"
     cmds:
       - task: generate-file
         vars:
           DOCKER_FILENAME: docker-compose_mongo.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-init.yml' >> docker-compose_mongo.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/db-mongo.yml' >> docker-compose_mongo.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/mongo-express.yml' >> docker-compose_mongo.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/mailer.yml' >> docker-compose_mongo.yml
-      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-volumes.yml' >> docker-compose_mongo.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: _docker-init.yml
+          DEST_COMP_FILENAME: _docker-init.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_mongo.yml
+          DEST_COMP_FILENAME: _mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_mongo-express.yml
+          DEST_COMP_FILENAME: _mongo-express.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: services/_mailer.yml
+          DEST_COMP_FILENAME: _mailer.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+      - task: add-component
+        vars:
+          SRC_COMP_FILENAME: _docker-volumes.yml
+          DEST_COMP_FILENAME: _docker-volumes.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
     vars:
       UUID:
         sh: uuidgen | tr -d -
-
-
 
   ## === ⭐  OTHERS =================================================
 
