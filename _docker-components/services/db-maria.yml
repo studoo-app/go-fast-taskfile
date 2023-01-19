@@ -1,0 +1,12 @@
+
+  database:
+    container_name: DOCKERCHANGE-database
+    image: mariadb:10.5.8
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: app_db
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - ./var/dbdata:/var/lib/mysql

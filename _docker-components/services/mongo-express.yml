@@ -1,0 +1,15 @@
+
+  mongo-express:
+    container_name: DOCKERCHANGE-mongo-express
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=yoo
+      - ME_CONFIG_MONGODB_URL=mongodb://root:yoo@dbmongo:27017/?authSource=admin
+      #- ME_CONFIG_BASICAUTH_USERNAME=yoo
+      #- ME_CONFIG_BASICAUTH_PASSWORD=yoo
+    links:
+      - database
+    restart: unless-stopped
+    ports:
+      - "8083:8081"
