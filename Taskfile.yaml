@@ -377,7 +377,8 @@ tasks:
     desc: "Add component to docker-compose"
     internal: true
     cmds:
-      - curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/docker-components/{{.SRC_COMP_FILENAME}} > ./_docker-components/{{.DEST_COMP_FILENAME}}
+      #- curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/docker-components/{{.SRC_COMP_FILENAME}} > ./_docker-components/{{.DEST_COMP_FILENAME}}
+      - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/docker-components/{{.SRC_COMP_FILENAME}} > ./_docker-components/{{.DEST_COMP_FILENAME}}
       - DIR="${PWD##*/}" && sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/{{.DEST_COMP_FILENAME}}' >> {{.DEST_DOCKER_COMPOSE_FILE}}
 
   create-mariadb-env:
