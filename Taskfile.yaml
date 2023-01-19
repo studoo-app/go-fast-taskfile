@@ -326,6 +326,62 @@ tasks:
     cmds:
       - "{{.PHPUNIT}} --coverage-html var/coverage"
 
+  ## === 👨‍🍳  DOCKER RECIPES =========================================
+
+  generate-file:
+    desc: "Create empty docker-compose.yml"
+    internal: true
+    cmds:
+      - cmd: touch {{.DOCKER_FILENAME}}
+        platforms: [ linux,darwin ]
+      - cmd: type {{.DOCKER_FILENAME}}
+        platforms: [ windows ]
+
+  make-maria-recipe:
+    desc: "Create MariaDb Docker-compose recipe"
+    cmds:
+      - task: generate-file
+        vars:
+          DOCKER_FILENAME: docker-compose_maria.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-init.yml' >> docker-compose_maria.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/db-maria.yml' >> docker-compose_maria.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/phpmyadmin.yml' >> docker-compose_maria.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/mailer.yml' >> docker-compose_maria.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-volumes.yml' >> docker-compose_maria.yml
+    vars:
+      UUID:
+        sh: uuidgen | tr -d -
+
+  make-mysql5-recipe:
+    desc: "Create Mysql5 Docker-compose recipe"
+    cmds:
+      - task: generate-file
+        vars:
+          DOCKER_FILENAME: docker-compose_mysql5.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-init.yml' >> docker-compose_mysql5.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/db-mysql-5.yml' >> docker-compose_mysql5.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/phpmyadmin.yml' >> docker-compose_mysql5.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/mailer.yml' >> docker-compose_mysql5.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-volumes.yml' >> docker-compose_mysql5.yml
+    vars:
+      UUID:
+        sh: uuidgen | tr -d -
+
+  make-mongo-recipe:
+    desc: "Create MongoDb Docker-compose recipe"
+    cmds:
+      - task: generate-file
+        vars:
+          DOCKER_FILENAME: docker-compose_mongo.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-init.yml' >> docker-compose_mongo.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/db-mongo.yml' >> docker-compose_mongo.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/mongo-express.yml' >> docker-compose_mongo.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/services/mailer.yml' >> docker-compose_mongo.yml
+      - sed 's/ENVCHANGEUUID/{{.UUID}}/g' 'parts/docker-volumes.yml' >> docker-compose_mongo.yml
+    vars:
+      UUID:
+        sh: uuidgen | tr -d -
+
   ## === ⭐  OTHERS =================================================
 
   before-commit:
