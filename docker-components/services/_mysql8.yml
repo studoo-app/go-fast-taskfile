@@ -1,0 +1,10 @@
+
+  database:
+    container_name: DOCKERCHANGE-database
+    image: mysql:8.0
+    platform: linux/amd64
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'

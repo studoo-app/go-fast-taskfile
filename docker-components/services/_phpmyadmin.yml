@@ -1,0 +1,16 @@
+
+  phpmyadmin:
+    container_name: DOCKERCHANGE-pma
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 1G
+      MEMORY_LIMIT: 512M
+      MAX_EXECUTION_TIME: 0
+    restart: always
+    links:
+      - database

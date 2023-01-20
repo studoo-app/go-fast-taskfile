@@ -1,0 +1,5 @@
+
+  mailer:
+    container_name: DOCKERCHANGE-mailer
+    image: schickling/mailcatcher
+    ports: [ "1025", "1080" ]
