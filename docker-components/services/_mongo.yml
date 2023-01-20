@@ -1,0 +1,13 @@
+
+  database:
+    container_name: DOCKERCHANGE-database
+    image: mongo:4.0
+    platform: linux/amd64
+    ports:
+      - "27017:27017"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: yoo
+    volumes:
+      - ./var/mongodata:/data
