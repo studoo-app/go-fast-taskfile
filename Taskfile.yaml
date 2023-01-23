@@ -72,11 +72,20 @@ tasks:
       - echo 'Votre systeme "{{OS}}"'
       - echo 'Votre architecture "{{ARCH}}"'
       - echo " ";
-      - echo " 🐋 DOCKER -----------------------------------"
-      - echo "* docker-up             Start docker containers"
-      - echo "* docker-stop           Stop docker containers"
+      - echo " 🐋 DOCKER --------------------------------------------------------------"
+      - echo "* docker-up                 Start docker containers"
+      - echo "* docker-stop               Stop docker containers"
+      - echo "* docker-down               Stop and remove docker containers, networks.."
+      - echo "* docker-reset              Stop and reset on your environment"
       - echo " ";
-      # - task --list
+      - echo " 📦 CREATE ENVS FILES ---------------------------------------------------"
+      - echo "* create-envs               Create environment files"
+      - echo "* generate-docker-compose   Create ready to use docker-compose.yml file"
+      - echo " ";
+      - echo " 🎛️ SYMFONY -------------------------------------------------------------"
+      - echo "* sf-start                  Start symfony server"
+      - echo "* sf-stop                   Stop symfony server"
+      # task --list
 
   ## === 🐋  DOCKER ================================================
 
@@ -90,16 +99,27 @@ tasks:
     cmds:
       - "{{.DOCKER_COMPOSE}} stop"
 
+  docker-down:
+    desc: "Stop and remove docker containers, networks.."
+    cmds:
+      - "{{.DOCKER_COMPOSE}} down"
+
+  docker-reset:
+    desc: "Stop and reset on your environment"
+    cmds:
+      - "{{.DOCKER_COMPOSE}} down -v"
+
   ## === 📦  CREATE ENVS FILES ==============================================
 
   create-envs:
     desc: "Create environment files"
     cmds:
       - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/_.env.example > _.env.example
-      # python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)'
+      # py -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)'
       - sed 's/ENVCHANGEUUID/{{.UUID}}/g' _.env.example > .env
     vars:
       UUID:
+        # TODO No exe to windows
         sh: uuidgen | tr -d -
 
   # deprecated v1.0.7
