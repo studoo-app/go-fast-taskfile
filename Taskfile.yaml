@@ -106,11 +106,11 @@ tasks:
     cmds:
       - task: create-components-dir
       - |
-        echo "Choose your database system ? [mariadb/mysql5/mongodb] :"
+        echo "Choose your database system ? [mariadb/mysql5/mysql8/mongodb] :"
         read CONFIRM
         case $CONFIRM in 
           mariadb)
-            task create-maria-env;;
+            task create-mariadb-env;;
           mysql5)
             task create-mysql5-env;;
           mysql8)
@@ -388,32 +388,32 @@ tasks:
     cmds:
       - task: generate-file
         vars:
-          DOCKER_FILENAME: docker-compose_maria.yml
+          DOCKER_FILENAME: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: _docker-init.yml
           DEST_COMP_FILENAME: _docker-init.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mariadb.yml
           DEST_COMP_FILENAME: _mariadb.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_phpmyadmin.yml
           DEST_COMP_FILENAME: _phpmyadmin.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mailer.yml
           DEST_COMP_FILENAME: _mailer.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: _docker-volumes.yml
           DEST_COMP_FILENAME: _docker-volumes.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
     vars:
       UUID:
         sh: uuidgen | tr -d -
