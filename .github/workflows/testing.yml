@@ -23,4 +23,5 @@ jobs:
       - name: Génération du docker-compose pour mariadb
         run: |
           task generate-docker-compose
-          echo mariadb
+          echo "mariadb"
+        shell: bash
