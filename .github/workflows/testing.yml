@@ -27,7 +27,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Génération du docker-compose pour ${{matrix.sgbd}}
         run: |
-          task one-line-gdc -- ${{matrix.sgbd}}
+          task generate-docker-compose-cli -- ${{matrix.sgbd}}
       - name: Health checking
         run: |
           task health-check -- ${{matrix.sgbd}}
