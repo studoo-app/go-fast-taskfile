@@ -22,6 +22,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Génération du docker-compose pour mariadb
         run: |
-          task generate-docker-compose
-          echo "mariadb"
-        shell: bash
+          task one-line-gdc -- mariadb
+      - name: Health checking
+        run: |
+          task health-check -- mariadb
