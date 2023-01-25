@@ -135,7 +135,7 @@ tasks:
     cmds:
       - task: create-components-dir
       - |
-        echo "Choose your database system ? [mariadb/mysql5/mongodb] :"
+        echo "Choose your database system ? [mariadb/mysql5/mysql8/mongodb] :"
         read CONFIRM
         case $CONFIRM in 
           mariadb)
@@ -146,6 +146,25 @@ tasks:
             task create-mysql8-env;;
           mongodb)
             task create-mongo-env;;
+          *)
+              echo -n "unknown";;
+        esac
+      - task: remove-components-dir
+
+  generate-docker-compose-cli:
+    desc: "Create ready to use docker-compose.yml file in one line declaration with cli args"
+    cmds:
+      - task: create-components-dir
+      - |
+        case {{.CLI_ARGS}} in 
+          mariadb)
+            task create-mariadb-env;;
+          mysql5)
+            task create-mysql5-env;;
+          mysql8)
+            task create-mysql8-env;;
+          mongodb)
+            task create-mongodb-env;;
           *)
               echo -n "unknown";;
         esac
@@ -417,32 +436,32 @@ tasks:
     cmds:
       - task: generate-file
         vars:
-          DOCKER_FILENAME: docker-compose_maria.yml
+          DOCKER_FILENAME: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: _docker-init.yml
           DEST_COMP_FILENAME: _docker-init.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mariadb.yml
           DEST_COMP_FILENAME: _mariadb.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_phpmyadmin.yml
           DEST_COMP_FILENAME: _phpmyadmin.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mailer.yml
           DEST_COMP_FILENAME: _mailer.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: _docker-volumes.yml
           DEST_COMP_FILENAME: _docker-volumes.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_maria.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mariadb.yml
     vars:
       UUID:
         sh: uuidgen | tr -d -
@@ -518,37 +537,37 @@ tasks:
         sh: uuidgen | tr -d -
 
 
-  create-mongo-env:
+  create-mongodb-env:
     desc: "Create MongoDb Docker-compose recipe"
     cmds:
       - task: generate-file
         vars:
-          DOCKER_FILENAME: docker-compose_mongo.yml
+          DOCKER_FILENAME: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: _docker-init.yml
           DEST_COMP_FILENAME: _docker-init.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mongo.yml
           DEST_COMP_FILENAME: _mongo.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mongo-express.yml
           DEST_COMP_FILENAME: _mongo-express.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mailer.yml
           DEST_COMP_FILENAME: _mailer.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: _docker-volumes.yml
           DEST_COMP_FILENAME: _docker-volumes.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
     vars:
       UUID:
         sh: uuidgen | tr -d -
