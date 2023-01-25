@@ -679,3 +679,13 @@ tasks:
           task sf-dmm-test
           task sf-dfl-test
         fi
+
+  health-check:
+    desc: "Perform health check after files generation"
+    cmds:
+      - echo "Health check performed succesfully !"
+    preconditions:
+      - sh: "[ ! -d _docker-components  ]"
+        msg: "_docker-components folder not removed !"
+      - sh: "[ -f docker-compose_{{.CLI_ARGS}}.yml ]"
+        msg: "docker-compose file missing"
