@@ -1,0 +1,19 @@
+# @author : Julien Pechberty
+#
+# https://help.github.com/en/actions
+name: Yoobike Delta CI Testing App
+on:
+  push:
+    branches:
+      - testing-ci
+jobs:
+  testing:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-lastest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Génération du docker-compose pour mariadb
+        run: task generate-docker-compose
