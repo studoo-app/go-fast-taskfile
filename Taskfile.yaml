@@ -489,37 +489,37 @@ tasks:
         sh: uuidgen | tr -d -
 
 
-  create-mongo-env:
+  create-mongodb-env:
     desc: "Create MongoDb Docker-compose recipe"
     cmds:
       - task: generate-file
         vars:
-          DOCKER_FILENAME: docker-compose_mongo.yml
+          DOCKER_FILENAME: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: _docker-init.yml
           DEST_COMP_FILENAME: _docker-init.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mongo.yml
           DEST_COMP_FILENAME: _mongo.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mongo-express.yml
           DEST_COMP_FILENAME: _mongo-express.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: services/_mailer.yml
           DEST_COMP_FILENAME: _mailer.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
       - task: add-component
         vars:
           SRC_COMP_FILENAME: _docker-volumes.yml
           DEST_COMP_FILENAME: _docker-volumes.yml
-          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongo.yml
+          DEST_DOCKER_COMPOSE_FILE: docker-compose_mongodb.yml
     vars:
       UUID:
         sh: uuidgen | tr -d -
@@ -674,7 +674,7 @@ tasks:
           mysql8)
             task create-mysql8-env;;
           mongodb)
-            task create-mongo-env;;
+            task create-mongodb-env;;
           *)
               echo -n "unknown";;
         esac
