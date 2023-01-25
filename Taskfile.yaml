@@ -122,6 +122,25 @@ tasks:
         esac
       - task: remove-components-dir
 
+  generate-docker-compose-cli:
+    desc: "Create ready to use docker-compose.yml file in one line declaration with cli args"
+    cmds:
+      - task: create-components-dir
+      - |
+        case {{.CLI_ARGS}} in 
+          mariadb)
+            task create-mariadb-env;;
+          mysql5)
+            task create-mysql5-env;;
+          mysql8)
+            task create-mysql8-env;;
+          mongodb)
+            task create-mongodb-env;;
+          *)
+              echo -n "unknown";;
+        esac
+      - task: remove-components-dir
+
   ## === 🎛️  SYMFONY ===============================================
 
   sf-start:
@@ -660,22 +679,3 @@ tasks:
         msg: "_docker-components folder not removed !"
       - sh: "[ -f docker-compose_{{.CLI_ARGS}}.yml ]"
         msg: "docker-compose file missing"
-
-  one-line-gdc:
-    desc: "Create ready to use docker-compose.yml file in one line declaration"
-    cmds:
-      - task: create-components-dir
-      - |
-        case {{.CLI_ARGS}} in 
-          mariadb)
-            task create-mariadb-env;;
-          mysql5)
-            task create-mysql5-env;;
-          mysql8)
-            task create-mysql8-env;;
-          mongodb)
-            task create-mongodb-env;;
-          *)
-              echo -n "unknown";;
-        esac
-      - task: remove-components-dir

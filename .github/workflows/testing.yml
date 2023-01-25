@@ -2,19 +2,21 @@
 #
 # https://help.github.com/en/actions
 name: setup symfony prohect TaskFile Testing
-on:
-  push:
-    branches:
-      - testing-ci
+on: pull_request
+#  push:
+#    branches:
+#      - testing-ci
 
 jobs:
   testing:
+    name: Testing on ${{matrix.os}}
     runs-on: ${{matrix.os}}
     continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
+        #os: [ubuntu-latest, windows-latest, macos-latest]
         sgbd: [mariadb,mysql5,mysql8,mongodb]
     steps:
       - name: Checkout
