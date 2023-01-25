@@ -21,4 +21,6 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Génération du docker-compose pour mariadb
-        run: mariadb | task generate-docker-compose
+        with:
+          confirm: mariadb
+        run: task generate-docker-compose
