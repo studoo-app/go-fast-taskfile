@@ -1,7 +1,7 @@
 # @author : Julien Pechberty
 #
 # https://help.github.com/en/actions
-name: Yoobike Delta CI Testing App
+name: setup symfony prohect TaskFile Testing
 on:
   push:
     branches:
@@ -20,4 +20,4 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Génération du docker-compose pour mariadb
-        run: task generate-docker-compose
+        run: task generate-docker-compose CONFIRM=mariadb
