@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - testing-ci
+
 jobs:
   testing:
     runs-on: ${{matrix.os}}
@@ -20,4 +21,6 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Génération du docker-compose pour mariadb
-        run: task generate-docker-compose CONFIRM=mariadb
+        run: task generate-docker-compose
+      - name: Input choix mariadb
+        run: echo "mariadb"
