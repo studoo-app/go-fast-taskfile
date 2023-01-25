@@ -2,7 +2,7 @@
 #
 # https://help.github.com/en/actions
 name: Testing
-on: pull_request
+on: [ pull_request, push ]
 #  push:
 #    branches:
 #      - testing-ci
