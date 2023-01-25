@@ -1,4 +1,5 @@
 # SETUP SYMFONY PROJET
+![CI](https://github.com/bfoujols/setup-symfony-projet/actions/workflows/testing.yml/badge.svg)
 
 Pour limiter la répétition des commandes, voici une proposition d'un makefile orienté crossPlatform TaskFile. \
 Plus d'information : [https://taskfile.dev/](https://taskfile.dev/)
@@ -11,7 +12,7 @@ Gestionnaire de package :
 - [ ] Pour MacOs -> Installer Brew : [https://brew.sh/](https://brew.sh/)
 
 Stack à installer :
-- [ ] Installer TaskFile : [https://taskfile.dev/installation/](https://taskfile.dev/installation/)
+- [ ] Installer TaskFile > v3.20 : [https://taskfile.dev/installation/](https://taskfile.dev/installation/)
 - [ ] Installer Docker : [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
 - [ ] Installer Docker Compose : [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
 - [ ] Installer PHP : [https://www.php.net/manual/fr/install.php](https://www.php.net/manual/fr/install.php)

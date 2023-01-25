@@ -18,7 +18,7 @@ silent: true
 vars:
   #
   # TASKFILE
-  VERSION: 1.0.6
+  VERSION: 1.0.9
   CONTRIBUTOR: "Benoit Foujols, Julien Pechberty"
   #
   # SYSTEM
@@ -61,15 +61,31 @@ tasks:
   help:
     desc: "Description des tâches disponibles"
     cmds:
+      - echo " ";
+      - echo " 🆘 HELP -------------------------------------"
       - echo "Bienvenu dans Taskfile pour Docker/Symfony"
       - echo "Merci aux contributeurs -> {{.CONTRIBUTOR}}"
-      - echo "----------------------------------------------"
+      - echo " ";
+      - echo " 📦 TECH -------------------------------------"
       - echo "Version de Taskfile {{.VERSION}}"
       - echo "Voici la description de votre systeme:"
       - echo 'Votre systeme "{{OS}}"'
       - echo 'Votre architecture "{{ARCH}}"'
-      - echo "----------------------------------------------"
-      - task --list
+      - echo " ";
+      - echo " 🐋 DOCKER --------------------------------------------------------------"
+      - echo "* docker-up                 Start docker containers"
+      - echo "* docker-stop               Stop docker containers"
+      - echo "* docker-down               Stop and remove docker containers, networks.."
+      - echo "* docker-reset              Stop and reset on your environment"
+      - echo " ";
+      - echo " 📦 CREATE ENVS FILES ---------------------------------------------------"
+      - echo "* create-envs               Create environment files"
+      - echo "* generate-docker-compose   Create ready to use docker-compose.yml file"
+      - echo " ";
+      - echo " 🎛️ SYMFONY -------------------------------------------------------------"
+      - echo "* sf-start                  Start symfony server"
+      - echo "* sf-stop                   Stop symfony server"
+      # task --list
 
   ## === 🐋  DOCKER ================================================
 
@@ -83,24 +99,37 @@ tasks:
     cmds:
       - "{{.DOCKER_COMPOSE}} stop"
 
+  docker-down:
+    desc: "Stop and remove docker containers, networks.."
+    cmds:
+      - "{{.DOCKER_COMPOSE}} down"
+
+  docker-reset:
+    desc: "Stop and reset on your environment"
+    cmds:
+      - "{{.DOCKER_COMPOSE}} down -v"
+
   ## === 📦  CREATE ENVS FILES ==============================================
 
   create-envs:
     desc: "Create environment files"
     cmds:
       - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/_.env.example > _.env.example
-      # python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)'
+      # py -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)'
       - sed 's/ENVCHANGEUUID/{{.UUID}}/g' _.env.example > .env
     vars:
       UUID:
+        # TODO No exe to windows
         sh: uuidgen | tr -d -
 
+  # deprecated v1.0.7
   create-docker-envs:
     desc: "Create environment files for docker"
     cmds:
       - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/_docker-compose.yml > _docker-compose.yml
       - DIR="${PWD##*/}" && sed "s/DOCKERCHANGE/$DIR/g" _docker-compose.yml > docker-compose.yml
 
+  # TODO Replace "unknown" -> exit 1
   generate-docker-compose:
     desc: "Create ready to use docker-compose.yml file"
     cmds:
@@ -385,22 +414,22 @@ tasks:
           rm -r _docker-components
         fi
 
+  # TODO Problem platform https://github.com/golang/go/blob/master/src/go/build/syslist.go
   generate-file:
     desc: "Create empty docker-compose.yml"
     internal: true
     cmds:
       - cmd: touch {{.DOCKER_FILENAME}}
-        platforms: [ linux,darwin ]
-      - cmd: type {{.DOCKER_FILENAME}}
-        platforms: [ windows ]
+        platforms: [linux, darwin, freebsd, openbsd, netbsd, dragonfly, solaris]
+      #- cmd: type {{.DOCKER_FILENAME}}
+      #  platforms: [windows]
 
   add-component:
     desc: "Add component to docker-compose"
     internal: true
     cmds:
-      #- curl -fsS https://raw.githubusercontent.com/JPechberty/setup-symfony-projet/%23Version-1.0.7/docker-components/{{.SRC_COMP_FILENAME}} > ./_docker-components/{{.DEST_COMP_FILENAME}}
       - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/docker-components/{{.SRC_COMP_FILENAME}} > ./_docker-components/{{.DEST_COMP_FILENAME}}
-      - DIR="${PWD##*/}" && sed 's/ENVCHANGEUUID/{{.UUID}}/g' '_docker-components/{{.DEST_COMP_FILENAME}}' >> {{.DEST_DOCKER_COMPOSE_FILE}}
+      - DIR="${PWD##*/}" && sed "s/DOCKERCHANGE/$DIR/g" '_docker-components/{{.DEST_COMP_FILENAME}}' >> {{.DEST_DOCKER_COMPOSE_FILE}}
 
   create-mariadb-env:
     desc: "Create MariaDb Docker-compose recipe"
