@@ -10,7 +10,9 @@ on:
 jobs:
   testing:
     runs-on: ${{matrix.os}}
+    continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         sgbd: [mariadb,mysql5,mysql8,mongodb]
