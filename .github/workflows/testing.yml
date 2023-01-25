@@ -1,7 +1,7 @@
 # @author : Julien Pechberty
 #
 # https://help.github.com/en/actions
-name: setup symfony prohect TaskFile Testing
+name: Testing
 on: pull_request
 #  push:
 #    branches:
