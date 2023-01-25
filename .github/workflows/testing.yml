@@ -17,5 +17,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install Task
         uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Génération du docker-compose pour mariadb
         run: task generate-docker-compose
