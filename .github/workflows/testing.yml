@@ -15,5 +15,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install Task
+        uses: arduino/setup-task@v1
       - name: Génération du docker-compose pour mariadb
         run: task generate-docker-compose
