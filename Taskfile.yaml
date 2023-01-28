@@ -406,6 +406,7 @@ tasks:
       # TODO replace uuidgen -> Python
       # py -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)'
       - sed 's/ENVCHANGEUUID/{{.UUID}}/g' _{{.SYMFONY_ENV}} > {{.SYMFONY_ENV}}
+      - rm _{{.SYMFONY_ENV}}
     vars:
       UUID:
         # TODO No exe to windows
@@ -472,8 +473,6 @@ tasks:
     desc: "Create Mysql5 Docker-compose recipe"
     cmds:
       - task: generate-docker-file
-        vars:
-          DOCKER_FILENAME: {{.DOCKER_FILE}}
       - task: add-docker-component
         vars:
           SRC_COMP_FILENAME: _docker-init.yml
@@ -508,8 +507,6 @@ tasks:
     desc: "Create Mysql8 Docker-compose recipe"
     cmds:
       - task: generate-docker-file
-        vars:
-          DOCKER_FILENAME: {{.DOCKER_FILE}}
       - task: add-docker-component
         vars:
           SRC_COMP_FILENAME: _docker-init.yml
@@ -545,8 +542,6 @@ tasks:
     desc: "Create MongoDb Docker-compose recipe"
     cmds:
       - task: generate-docker-file
-        vars:
-          DOCKER_FILENAME: {{.DOCKER_FILE}}
       - task: add-docker-component
         vars:
           SRC_COMP_FILENAME: _docker-init.yml
@@ -608,7 +603,7 @@ tasks:
         echo "Are you sure you download to file raw config docker-compose ? [y/N] :"
         read CONFIRM
         if [ "$CONFIRM" = "y" ]; then
-          task create-docker-envs
+          task generate-docker-compose
           task docker-up
         fi
       - task: composer-install
