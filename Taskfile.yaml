@@ -593,6 +593,7 @@ tasks:
       - task: qa-lint-schema
       - task: tests
 
+  # sleep 20 && nc -vz localhost 3306
   first-install:
     desc: "First install"
     cmds:
@@ -611,6 +612,10 @@ tasks:
         if [ "$CONFIRM" = "y" ]; then
           task generate-docker-compose
           task docker-up
+          echo "Wait the service ..."
+          sleep 10
+          echo "Are you sure the docker service is UP ? [Enter] :"
+          read CONFIRM
         fi
       - task: composer-install
       - |
@@ -619,8 +624,6 @@ tasks:
         if [ "$CONFIRM" = "y" ]; then
           task npm-install
         fi
-      - task: docker-up
-      - sleep 10
       - task: sf-perm
       - task: sf-ddc
       - task: sf-dmm
