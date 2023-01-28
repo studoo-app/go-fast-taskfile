@@ -90,6 +90,12 @@ tasks:
       - echo "* sf-stop                   Stop symfony server"
       # task --list
 
+  update:
+    desc: "Update taskfile config in your project"
+    cmds:
+      - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/{{.ENV}}/Taskfile.yaml > Taskfile.yaml
+      - task: help
+
   ## === 🐋  DOCKER ================================================
 
   docker-up:
