@@ -620,6 +620,7 @@ tasks:
           task npm-install
         fi
       - task: docker-up
+      - sleep 10
       - task: sf-perm
       - task: sf-ddc
       - task: sf-dmm
