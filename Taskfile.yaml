@@ -494,7 +494,7 @@ tasks:
         vars:
           SRC_COMP_FILENAME: services/_phpmyadmin.yml
           DEST_COMP_FILENAME: _phpmyadmin.yml
-      - task: aadd-docker-component
+      - task: add-docker-component
         vars:
           SRC_COMP_FILENAME: services/_mailer.yml
           DEST_COMP_FILENAME: _mailer.yml
