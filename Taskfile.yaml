@@ -652,7 +652,13 @@ tasks:
         read CONFIRM
         if [ "$CONFIRM" = "y" ]; then
           task sf-stop
-          task docker-stop
+          echo "Are you docker stop or down ? [S/d] :"
+          read CONFIRM_DOCKER
+          if [ "$CONFIRM_DOCKER" = "d" ]; then
+            task docker-down
+          else
+            task docker-stop
+          fi
         fi
 
   reset-db:
