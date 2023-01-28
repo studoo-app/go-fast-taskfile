@@ -3,8 +3,11 @@
     container_name: DOCKERCHANGE-database
     image: mysql:8.0
     platform: linux/amd64
+    ports:
+      - "3306:3306"
     restart: always
-    volumes:
-      - db-data:/var/lib/mysql
     environment:
+      MYSQL_DATABASE: app_db
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - ./var/dbdata:/var/lib/mysql
