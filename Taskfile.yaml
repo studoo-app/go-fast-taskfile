@@ -18,7 +18,7 @@ silent: true
 vars:
   #
   # TASKFILE
-  VERSION: 1.0.9
+  VERSION: 1.1.0
   CONTRIBUTOR: "Benoit Foujols, Julien Pechberty"
   ENV: main
   #
