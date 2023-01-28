@@ -722,5 +722,5 @@ tasks:
     preconditions:
       - sh: "[ ! -d _docker-components  ]"
         msg: "_docker-components folder not removed !"
-      - sh: "[ -f docker-compose_{{.CLI_ARGS}}.yml ]"
+      - sh: "[ -f docker-compose.yml ]"
         msg: "docker-compose file missing"
