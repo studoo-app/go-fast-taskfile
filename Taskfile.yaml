@@ -18,7 +18,7 @@ silent: true
 vars:
   #
   # TASKFILE
-  VERSION: 1.1.0
+  VERSION: 1.1.1
   CONTRIBUTOR: "Benoit Foujols, Julien Pechberty"
   ENV: main
   #
@@ -65,35 +65,24 @@ tasks:
     desc: "Description des tâches disponibles"
     cmds:
       - echo " ";
-      - echo " 🆘 HELP -------------------------------------"
-      - echo "Bienvenu dans Taskfile pour Docker/Symfony"
-      - echo "Merci aux contributeurs -> {{.CONTRIBUTOR}}"
+      - echo "Welcome to Taskfile for Docker/Symfony"
+      - echo "Thanks for contributor -> {{.CONTRIBUTOR}}"
       - echo " ";
-      - echo " 📦 TECH -------------------------------------"
-      - echo "Version de Taskfile {{.VERSION}}"
-      - echo "Voici la description de votre systeme:"
-      - echo 'Votre systeme "{{OS}}"'
-      - echo 'Votre architecture "{{ARCH}}"'
+      - echo " 📦 YOUR SYSTEM ---------------------------------------------------------"
+      - echo "Version {{.VERSION}}"
+      - echo 'Your system "{{OS}}" / "{{ARCH}}"'
       - echo " ";
-      - echo " 🐋 DOCKER --------------------------------------------------------------"
-      - echo "* docker-up                 Start docker containers"
-      - echo "* docker-stop               Stop docker containers"
-      - echo "* docker-down               Stop and remove docker containers, networks.."
-      - echo "* docker-reset              Stop and reset on your environment"
+      - echo " 📦 ESSENTIAL TASK ---------------------------------------------------------"
+      - echo "* start               Start project Symfony"
+      - echo "* stop                Stop project Symfony"
       - echo " ";
-      - echo " 📦 CREATE ENVS FILES ---------------------------------------------------"
-      - echo "* create-envs               Create environment files"
-      - echo "* generate-docker-compose   Create ready to use docker-compose.yml file"
-      - echo " ";
-      - echo " 🎛️ SYMFONY -------------------------------------------------------------"
-      - echo "* sf-start                  Start symfony server"
-      - echo "* sf-stop                   Stop symfony server"
-      # task --list
+      - echo " 🎛️ OTHER TASK ----------------------------------------------------------"
+      - task --list
 
   update:
     desc: "Update taskfile config in your project"
     cmds:
-      - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/{{.ENV}}/Taskfile.yaml > Taskfile.yaml
+      - curl -fsS https://raw.githubusercontent.com/studoo-app/go-fast-taskfile/{{.ENV}}/Taskfile.yaml > Taskfile.yaml
       - task: help
 
   ## === 🐋  DOCKER ================================================
@@ -408,7 +397,7 @@ tasks:
   create-envs:
     desc: "Create environment files"
     cmds:
-      - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/{{.ENV}}/docker-components/_env-ini > _{{.SYMFONY_ENV}}
+      - curl -fsS https://raw.githubusercontent.com/studoo-app/go-fast-taskfile/{{.ENV}}/docker-components/_env-ini > _{{.SYMFONY_ENV}}
       # TODO replace uuidgen -> Python
       # py -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)'
       - sed 's/ENVCHANGEUUID/{{.UUID}}/g' _{{.SYMFONY_ENV}} > {{.SYMFONY_ENV}}
@@ -422,7 +411,7 @@ tasks:
     desc: "Add component to environment file"
     internal: true
     cmds:
-      - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/{{.ENV}}/docker-components/{{.SRC_COMP_FILENAME}} >> {{.SYMFONY_ENV}}
+      - curl -fsS https://raw.githubusercontent.com/studoo-app/go-fast-taskfile/{{.ENV}}/docker-components/{{.SRC_COMP_FILENAME}} >> {{.SYMFONY_ENV}}
 
   # TODO Problem platform https://github.com/golang/go/blob/master/src/go/build/syslist.go
   generate-docker-file:
@@ -438,7 +427,7 @@ tasks:
     desc: "Add component to docker-compose"
     internal: true
     cmds:
-      - curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/{{.ENV}}/docker-components/{{.SRC_COMP_FILENAME}} > ./_docker-components/{{.DEST_COMP_FILENAME}}
+      - curl -fsS https://raw.githubusercontent.com/studoo-app/go-fast-taskfile/{{.ENV}}/docker-components/{{.SRC_COMP_FILENAME}} > ./_docker-components/{{.DEST_COMP_FILENAME}}
       - DIR="${PWD##*/}" && sed "s/DOCKERCHANGE/$DIR/g" '_docker-components/{{.DEST_COMP_FILENAME}}' >> {{.DOCKER_FILE}}
 
   create-mariadb-env:
