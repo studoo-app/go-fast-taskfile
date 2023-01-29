@@ -1,4 +1,4 @@
-# SETUP SYMFONY PROJET
+# GO FAST TASKFILE
 ![CI](https://github.com/bfoujols/setup-symfony-projet/actions/workflows/testing.yml/badge.svg)
 
 Pour limiter la répétition des commandes, voici une proposition d'un makefile orienté crossPlatform TaskFile. \
