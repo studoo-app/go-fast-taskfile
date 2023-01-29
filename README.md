@@ -1,4 +1,5 @@
-# SETUP SYMFONY PROJET
+![separe](https://github.com/studoo-app/.github/blob/main/profile/studoo-banner-logo.png) 
+# GO FAST TASKFILE
 ![CI](https://github.com/bfoujols/setup-symfony-projet/actions/workflows/testing.yml/badge.svg)
 
 Pour limiter la répétition des commandes, voici une proposition d'un makefile orienté crossPlatform TaskFile. \
