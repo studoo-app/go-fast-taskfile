@@ -26,7 +26,7 @@ Optionnel :
 ### 2. Installation Taskfile dans le projet
 
 ```bash
-curl -fsS https://raw.githubusercontent.com/bfoujols/setup-symfony-projet/main/Taskfile.yaml > Taskfile.yaml
+curl -fsS https://raw.githubusercontent.com/studoo-app/go-fast-taskfile/main/Taskfile.yaml > Taskfile.yaml
 ```
 
 ### 3. Initialisation du projet 
