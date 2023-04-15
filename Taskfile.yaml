@@ -18,7 +18,7 @@ silent: true
 vars:
   #
   # TASKFILE
-  VERSION: 1.1.1
+  VERSION: 1.1.3
   CONTRIBUTOR: "Benoit Foujols, Julien Pechberty"
   ENV: main
   #
@@ -612,6 +612,12 @@ tasks:
         read CONFIRM
         if [ "$CONFIRM" = "y" ]; then
           task npm-install
+        fi
+      - |
+        echo "Are you directory var/ is exist ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          mkdir var
         fi
       - task: sf-perm
       - task: sf-ddc
