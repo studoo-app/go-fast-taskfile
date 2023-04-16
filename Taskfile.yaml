@@ -614,9 +614,9 @@ tasks:
           task npm-install
         fi
       - |
-        echo "Are you directory var/ is exist ? [y/N] :"
+        echo "Are you directory var/ is exist ? [Y/n] :"
         read CONFIRM
-        if [ "$CONFIRM" = "y" ]; then
+        if [ "$CONFIRM" = "n" ]; then
           mkdir var
         fi
       - task: sf-perm
