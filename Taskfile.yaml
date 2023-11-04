@@ -18,9 +18,9 @@ silent: true
 vars:
   #
   # TASKFILE
-  VERSION: 1.1.3
+  VERSION: 1.1.4
   CONTRIBUTOR: "Benoit Foujols, Julien Pechberty"
-  ENV: main
+  ENV: dev
   #
   # SYSTEM
   PWD: $PWD
@@ -376,6 +376,20 @@ tasks:
       - "{{.PHPUNIT}} --coverage-html var/coverage"
 
   ## === 👨‍🍳  DOCKER RECIPES =========================================
+  check-docker:
+    desc: Check Docker Service
+    cmds:
+      - |
+        if docker ps >/dev/null 2>&1; then
+          echo "[X] Docker is running"
+        else
+          echo "WARNING : Docker is not running, please start docker service !"
+          echo "Are you sure you start docker service ? [y/N] :"
+          read CONFIRM
+          if [ "$CONFIRM" = "y" ]; then
+            task check-docker
+          fi
+        fi
 
   create-components-dir:
     desc: "Create _docker-components directory"
@@ -621,7 +635,12 @@ tasks:
         fi
       - task: sf-perm
       - task: sf-ddc
-      - task: sf-dmm
+      - |
+        echo "Are you sure you want to migration ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          task sf-dmm
+        fi
       - |
         echo "Are you sure you want to datafixture ? [y/N] :"
         read CONFIRM
@@ -634,6 +653,7 @@ tasks:
   start:
     desc: "Start"
     cmds:
+      - task: check-docker
       - |
         if [ ! -f .env ]; then
           task first-install
