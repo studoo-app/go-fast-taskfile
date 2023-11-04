@@ -20,7 +20,7 @@ vars:
   # TASKFILE
   VERSION: 1.1.4
   CONTRIBUTOR: "Benoit Foujols, Julien Pechberty"
-  ENV: dev
+  ENV: main
   #
   # SYSTEM
   PWD: $PWD
