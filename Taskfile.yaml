@@ -739,3 +739,19 @@ tasks:
         msg: "_docker-components folder not removed !"
       - sh: "[ -f docker-compose.yml ]"
         msg: "docker-compose file missing"
+
+  reset:
+    desc: "Reset all configuration project"
+    cmds:
+      - |
+        echo "Are you sure you want to reset all configuration project ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          rm -fr .env docker-compose* vendor node_modules
+        fi
+      - |
+        echo "Are you sure you want to delete var/ repository ? [y/N] :"
+        read CONFIRM
+        if [ "$CONFIRM" = "y" ]; then
+          rm -fr var
+        fi
